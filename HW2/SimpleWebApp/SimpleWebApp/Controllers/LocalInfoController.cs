@@ -14,7 +14,7 @@ namespace SimpleWebApp.Controllers
             _logger = logger;
         }
 
-        [HttpGet(Name = "GetLocalInfo")]
+        [HttpGet("getlocalinfo")]
         public LocalInfo GetLocalInfo()
         {
             var currentDateTime = DateTime.Now;
