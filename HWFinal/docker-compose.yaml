@@ -1,0 +1,75 @@
+version: "3.3"
+services:
+  simplewebapp:
+    build: ./SimpleWebApp
+    image: simplewebapp
+    container_name: simplewebapp_HWFinal
+    ports:
+      - "5000:5000"
+    networks:
+      - HWFinalNet
+  postgres:
+    image: postgres
+    container_name: postgres_HWFinal
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin123
+      - POSTGRES_DB=SonarQubeDB
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - HWFinalNet
+  sonarqube:
+    image: sonarqube
+    container_name: sonarqube_HWFinal
+    ports:
+      - "9000:9000"
+    environment:
+      - SONAR_JDBC_URL=jdbc:postgresql://postgres_HWFinal/SonarQubeDB
+      - SONAR_JDBC_USERNAME=admin
+      - SONAR_JDBC_PASSWORD=admin123
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_logs:/opt/sonarqube/logs
+      - sonarqube_extensions:/opt/sonarqube/extensions
+    networks:
+      - HWFinalNet
+    depends_on:
+      - postgres
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins_HWFinal
+    ports:
+      - "8080:8080"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+    networks:
+      - HWFinalNet
+  nexus:
+    image: sonatype/nexus3
+    container_name: nexus_HWFinal
+    ports:
+      - "8081:8081"
+    volumes:
+      - nexus_data:/nexus-data
+    networks:
+      - HWFinalNet
+  portainer:
+    image: portainer/portainer-ce
+    container_name: portainer_HWFinal
+    ports:
+      - "9443:9443"
+    volumes:
+      - portainer_data:/data
+    networks:
+      - HWFinalNet
+volumes:
+  postgres_data:
+  sonarqube_data:
+  sonarqube_logs:
+  sonarqube_extensions:
+  jenkins_home:
+  nexus_data:
+  portainer_data:
+networks:
+  HWFinalNet:
